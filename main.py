@@ -39,10 +39,9 @@ def main():
                                 if type(key) is str and (
                                     key.encode("ascii", errors="ignore").decode("ascii")
                                 ):
-                                    if key == " ":
-                                        keyboard.press("space")
-                                    else:
+                                    if key != " ":
                                         keyboard.press(key)
+
                                 else:
                                     print(key)
                         else:
