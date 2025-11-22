@@ -307,6 +307,12 @@ wheels = [
 ]
 
 [[package]]
+name = "python-uinput"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1d/58/f0ac92b19b3a9eda6a1d88d48bd17993d8a749600d981715b9be372ded5d/python-uinput-1.0.1.tar.gz", hash = "sha256:853697344b64df5537d4ae32ba6fbcf0515d51a9010910f5d5019959038b6eba", size = 41415, upload-time = "2024-03-17T18:55:35.7Z" }
+
+[[package]]
 name = "python-xlib"
 version = "0.33"
 source = { registry = "https://pypi.org/simple" }
@@ -350,6 +356,7 @@ dependencies = [
     { name = "opencv-python" },
     { name = "pillow" },
     { name = "pynput" },
+    { name = "python-uinput", marker = "sys_platform == 'linux'" },
     { name = "requests" },
 ]
 
@@ -358,6 +365,7 @@ requires-dist = [
     { name = "opencv-python", specifier = ">=4.12.0.88" },
     { name = "pillow", specifier = ">=12.0.0" },
     { name = "pynput", specifier = ">=1.8.1" },
+    { name = "python-uinput", marker = "sys_platform == 'linux'" },
     { name = "requests", specifier = ">=2.32.5" },
 ]
 

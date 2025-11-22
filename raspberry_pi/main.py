@@ -1,7 +1,12 @@
+import os
+import sys
 import time
 from io import BytesIO
 
-# os.environ["PYNPUT_BACKEND_KEYBOARD"] = "uinput"
+# change input managment for pynput if i am on the raspberry pi
+if sys.platform == "linux":
+    os.environ["PYNPUT_BACKEND_KEYBOARD"] = "uinput"
+
 import cv2 as cv
 import requests
 from PIL import Image
@@ -9,7 +14,7 @@ from pynput.keyboard import Controller
 
 pressed = True
 
-api = "https://webpage-toolbox-trembl-campbell.trycloudflare.com"
+api = ""
 
 
 def pil2bytes(image: Image.Image) -> bytes:
