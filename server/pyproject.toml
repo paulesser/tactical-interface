@@ -8,5 +8,6 @@ dependencies = [
     "easyocr>=1.7.2",
     "fastapi[standard]>=0.121.3",
     "pillow>=12.0.0",
+    "pyinstrument>=5.1.1",
     "torch>=2.9.1",
 ]

@@ -2,11 +2,13 @@ from contextlib import asynccontextmanager
 
 import easyocr
 import torch
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
+from pyinstrument import Profiler
 
 reader: None | easyocr.Reader = None
+PROFILING = True
 
 
 @asynccontextmanager
@@ -19,8 +21,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    lifespan=lifespan,
     title="OCR Backend for Sankt Interface",
+    lifespan=lifespan,
     description="""
 
     """,
@@ -41,6 +43,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if PROFILING:
+
+    @app.middleware("http")
+    async def profile_request(request: Request, call_next):
+        profiling = request.query_params.get("profile", False)
+        if profiling:
+            profiler = Profiler()
+            profiler.start()
+            await call_next(request)
+            profiler.stop()
+            return HTMLResponse(profiler.output_html())
+        else:
+            return await call_next(request)
+
 
 @app.get(
     "/",
@@ -57,13 +73,11 @@ async def index():
 
     """,
 )
-def ocr(
+async def ocr(
     image: UploadFile = File(...),
 ) -> str:
-    global reader
     assert reader is not None
     file = image.file.read()
-
     result = reader.readtext(image=file)
     stringResult = ""
     for r in result:

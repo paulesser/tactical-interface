@@ -1,7 +1,8 @@
 import os
 import sys
-import time
-from io import BytesIO
+
+from dotenv import find_dotenv, load_dotenv
+from pydantic_settings import BaseSettings
 
 # change input managment for pynput if i am on the raspberry pi
 if sys.platform == "linux":
@@ -9,33 +10,21 @@ if sys.platform == "linux":
 
 import cv2 as cv
 import requests
-from PIL import Image
 from pynput.keyboard import Controller
 
 pressed = True
 
-api = ""
+load_dotenv(find_dotenv(".env"))
 
 
-def pil2bytes(image: Image.Image) -> bytes:
-    """
-    converts pil image into bytes
-    Args:
-        image (Image.Image): the source image
-    Returns:
-        bytes: the bytes representation of the image
-    """
-    img_byte_arr = BytesIO()
-    image.save(img_byte_arr, format="PNG")
-    return img_byte_arr.getvalue()
+class Settings(BaseSettings):
+    api_url: str
 
 
 def main():
-    cam = cv.VideoCapture(0)
-    # cam.set(CAP_PROP_FRAME_WIDTH, 1920)
-    # cam.set(CAP_PROP_FRAME_HEIGHT, 1080)
-    time.sleep(2)
+    cam = cv.VideoCapture(1)
 
+    url = Settings().api_url
     keyboard = Controller()
 
     while True:
@@ -46,17 +35,22 @@ def main():
                 cv.waitKey(1)
 
                 frame_rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-                pil_image = Image.fromarray(frame_rgb)
-                response = requests.post(
-                    f"{api}/ocr",
-                    files={
-                        "image": pil2bytes(pil_image),
-                    },
-                )
-                print(response.text)
-                if False:
-                    keyboard.press("a")
-                time.sleep(1)
+                ret2, encoded_image = cv.imencode(".png", frame_rgb)
+                if ret2:
+                    img_byte_arr = encoded_image.tobytes()
+                    response = requests.post(
+                        f"{url}/ocr",
+                        files={
+                            "image": img_byte_arr,
+                        },
+                    )
+                    for char in response.text:
+                        keyboard.press(char)
+                else:
+                    print("error encoding image into bytes")
+            else:
+                print("error opening webcam")
+
         except KeyboardInterrupt:
             cam.release()
             cv.destroyAllWindows()
