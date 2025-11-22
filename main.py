@@ -36,8 +36,12 @@ def main():
                     for r in result:
                         if isinstance(r, tuple):
                             for key in r[1]:
-                                keyboard.press(key)
-                                print(key)
+                                if type(key) is str and (
+                                    key.encode("ascii", errors="ignore").decode("ascii")
+                                ):
+                                    keyboard.press(key)
+                                else:
+                                    print(key)
                         else:
                             print("no keys found")
                 else:
