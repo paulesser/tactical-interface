@@ -1,5 +1,7 @@
+import os
 import time
 
+os.environ["PYNPUT_BACKEND_KEYBOARD"] = "uinput"
 import easyocr
 from cv2 import (
     COLOR_BGR2RGB,
@@ -7,7 +9,6 @@ from cv2 import (
     cvtColor,
     destroyAllWindows,
     imshow,
-    namedWindow,
     waitKey,
 )
 from pynput.keyboard import Controller
@@ -20,7 +21,7 @@ def main():
     time.sleep(2)
     reader = easyocr.Reader(["de", "en"])
     keyboard = Controller()
-    namedWindow("Image")
+
     while True:
         try:
             ret, frame = cam.read()
@@ -30,7 +31,6 @@ def main():
 
                 frame_rgb = cvtColor(frame, COLOR_BGR2RGB)
 
-                print("frame shape", frame.shape)
                 result = reader.readtext(image=frame_rgb)
                 if len(result) > 0:
                     for r in result:
