@@ -1,13 +1,16 @@
+import os
 import time
 
+os.environ["QT_QPA_PLATFORM"] = "xcb"
+
 import easyocr
-from cv2 import COLOR_BGR2RGB, VideoCapture, cvtColor, imshow
+from cv2 import CAP_V4L2, COLOR_BGR2RGB, VideoCapture, cvtColor, imshow
 from pynput.keyboard import Controller
 
 
 def main():
     keyboard = Controller()
-    cam = VideoCapture(1)
+    cam = VideoCapture(0, CAP_V4L2)
     reader = easyocr.Reader(["de", "en"])
     while True:
         try:
