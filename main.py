@@ -37,7 +37,9 @@ def main():
                         if isinstance(r, tuple):
                             for key in r[1]:
                                 if type(key) is str and (
-                                    key.encode("ascii", errors="ignore").decode("ascii")
+                                    key.encode("ascii", errors="ignore")
+                                    .decode("ascii")
+                                    .strip()
                                 ):
                                     keyboard.press(key)
                                 else:
