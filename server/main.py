@@ -1,4 +1,7 @@
+from contextlib import asynccontextmanager
+
 import easyocr
+import torch
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -6,7 +9,17 @@ from fastapi.responses import RedirectResponse
 reader: None | easyocr.Reader = None
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global reader
+    reader = easyocr.Reader(["de", "en"])
+    yield
+    reader = None
+    torch.cuda.empty_cache()
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="OCR Backend for Sankt Interface",
     description="""
 
@@ -47,7 +60,7 @@ async def index():
 def ocr(
     image: UploadFile = File(...),
 ) -> str:
-    reader = easyocr.Reader(["de", "en"])
+    global reader
     assert reader is not None
     file = image.file.read()
 
