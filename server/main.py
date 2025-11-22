@@ -1,27 +1,12 @@
-from contextlib import asynccontextmanager
-from io import BytesIO
-
 import easyocr
-import torch
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-from PIL import Image
 
 reader: None | easyocr.Reader = None
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global reader
-    if torch.cuda.is_available():
-        print("running on cuda")
-    reader = easyocr.Reader(["de", "en"])
-    torch.cuda.empty_cache()
-
-
 app = FastAPI(
-    lifespan=lifespan,
     title="OCR Backend for Sankt Interface",
     description="""
 
@@ -59,13 +44,14 @@ async def index():
 
     """,
 )
-async def ocr(
+def ocr(
     image: UploadFile = File(...),
 ) -> str:
+    reader = easyocr.Reader(["de", "en"])
     assert reader is not None
     file = image.file.read()
-    pil_image = Image.open(BytesIO(file)).convert("RGB")
-    result = reader.readtext(image=pil_image)
+
+    result = reader.readtext(image=file)
     stringResult = ""
     for r in result:
         if isinstance(r, tuple):
