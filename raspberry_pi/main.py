@@ -1,7 +1,6 @@
-import os
 import time
 
-os.environ["PYNPUT_BACKEND_KEYBOARD"] = "uinput"
+# os.environ["PYNPUT_BACKEND_KEYBOARD"] = "uinput"
 import easyocr
 from cv2 import (
     COLOR_BGR2RGB,
@@ -13,7 +12,7 @@ from cv2 import (
 )
 from pynput.keyboard import Controller
 
-pressed = False
+pressed = True
 
 
 def main():
@@ -32,8 +31,9 @@ def main():
                 waitKey(1)
 
                 frame_rgb = cvtColor(frame, COLOR_BGR2RGB)
-                if pressed:
+                if True:
                     result = reader.readtext(image=frame_rgb)
+                    print(result)
                     if len(result) > 0:
                         for r in result:
                             if isinstance(r, tuple):
@@ -43,11 +43,9 @@ def main():
                                             "ascii"
                                         )
                                     ):
-                                        if key != " ":
+                                        if False and key != " ":
                                             keyboard.press(key)
 
-                                    else:
-                                        print(key)
                             else:
                                 print("no keys found")
                     else:
