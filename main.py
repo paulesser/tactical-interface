@@ -4,6 +4,7 @@ import time
 os.environ["QT_QPA_PLATFORM"] = "xcb"
 
 import easyocr
+import keyboard
 from cv2 import (
     CAP_PROP_FRAME_HEIGHT,
     CAP_PROP_FRAME_WIDTH,
@@ -13,11 +14,9 @@ from cv2 import (
     cvtColor,
     imshow,
 )
-from pynput.keyboard import Controller
 
 
 def main():
-    keyboard = Controller()
     cam = VideoCapture(0, CAP_V4L2)
     cam.set(CAP_PROP_FRAME_WIDTH, 1920)
     cam.set(CAP_PROP_FRAME_HEIGHT, 1080)
@@ -35,7 +34,7 @@ def main():
                     for r in result:
                         if isinstance(r, tuple):
                             for key in r[1]:
-                                keyboard.press(key)
+                                keyboard.write(key)
                                 print(key)
                         else:
                             print("no keys found")
