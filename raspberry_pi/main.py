@@ -9,7 +9,7 @@ from pynput.keyboard import Controller
 
 pressed = True
 
-api = ""
+api = "https://webpage-toolbox-trembl-campbell.trycloudflare.com"
 
 
 def pil2bytes(image: Image.Image) -> bytes:
