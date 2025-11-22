@@ -11,6 +11,7 @@ from pynput.keyboard import Controller
 def main():
     keyboard = Controller()
     cam = VideoCapture(0, CAP_V4L2)
+    time.sleep(2)
     reader = easyocr.Reader(["de", "en"])
     while True:
         try:
@@ -18,6 +19,7 @@ def main():
             if ret:
                 imshow("Captured", frame)
                 frame_rgb = cvtColor(frame, COLOR_BGR2RGB)
+                print("frame shape", frame.shape)
                 result = reader.readtext(image=frame_rgb)
                 if len(result) > 0:
                     for r in result:
