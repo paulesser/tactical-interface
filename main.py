@@ -13,6 +13,8 @@ from cv2 import (
 )
 from pynput.keyboard import Controller
 
+pressed = False
+
 
 def main():
     cam = VideoCapture(0)
@@ -30,27 +32,28 @@ def main():
                 waitKey(1)
 
                 frame_rgb = cvtColor(frame, COLOR_BGR2RGB)
+                if pressed:
+                    result = reader.readtext(image=frame_rgb)
+                    if len(result) > 0:
+                        for r in result:
+                            if isinstance(r, tuple):
+                                for key in r[1]:
+                                    if type(key) is str and (
+                                        key.encode("ascii", errors="ignore").decode(
+                                            "ascii"
+                                        )
+                                    ):
+                                        if key != " ":
+                                            keyboard.press(key)
 
-                result = reader.readtext(image=frame_rgb)
-                if len(result) > 0:
-                    for r in result:
-                        if isinstance(r, tuple):
-                            for key in r[1]:
-                                if type(key) is str and (
-                                    key.encode("ascii", errors="ignore").decode("ascii")
-                                ):
-                                    if key != " ":
-                                        keyboard.press(key)
-
-                                else:
-                                    print(key)
-                        else:
-                            print("no keys found")
-                else:
-                    print("no letters found")
+                                    else:
+                                        print(key)
+                            else:
+                                print("no keys found")
+                    else:
+                        print("no letters found")
             else:
                 print("no image")
-            time.sleep(1)
         except KeyboardInterrupt:
             cam.release()
             destroyAllWindows()
