@@ -10,3 +10,5 @@ rustautogui = { version = "2.5.0", features = ["lite"] }
 reqwest = { version = "0.12", features = ["json","multipart"] }
 tokio = { version = "1.48.0", features = ["full"] }
 dotenv_codegen = "0.15.0"
+eframe = "0.33.2"
+egui-async = "0.2.5"
