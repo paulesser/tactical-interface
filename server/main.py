@@ -83,10 +83,7 @@ async def ocr(
     for r in result:
         if isinstance(r, tuple):
             for key in r[1]:
-                if type(key) is str and (
-                    key.encode("ascii", errors="ignore").decode("ascii")
-                ):
-                    if key != " ":
-                        stringResult += key
+                if type(key) is str:
+                    stringResult += key
 
     return stringResult

@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_files as fs;
+//use actix_files as fs;
 use actix_web::{App, HttpResponse, HttpServer, Responder, post};
 use rustautogui;
 
@@ -21,10 +21,8 @@ async fn main() -> std::io::Result<()> {
     pretty_env_logger::init();
     HttpServer::new(|| {
         let cors = Cors::permissive();
-        App::new()
-            .wrap(cors)
-            .service(keyboard_route)
-            .service(fs::Files::new("/", "./static").index_file("index.html"))
+        App::new().wrap(cors).service(keyboard_route)
+        //.service(fs::Files::new("/", "./static").index_file("index.html"))
     })
     .bind(("127.0.0.1", 3080))?
     .run()

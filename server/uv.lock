@@ -1276,7 +1276,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "easyocr", specifier = ">=1.7.2" },
-    { name = "fastapi", extras = ["standard"], specifier = ">=0.121.3" },
+    { name = "fastapi", extras = ["full", "standard", "standart"], specifier = ">=0.121.3" },
     { name = "pillow", specifier = ">=12.0.0" },
     { name = "pyinstrument", specifier = ">=5.1.1" },
     { name = "torch", specifier = ">=2.9.1" },
