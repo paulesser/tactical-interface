@@ -15,35 +15,41 @@ const sketch = (p: p5) => {
     capture.hide();
     p.frameRate(14);
   };
-  p.draw = () => {
+  p.draw = async () => {
     p.background(100);
+    if (capture) {
+      p.image(capture, 0, 0);
+    }
     countdown = (p.millis() - lastMilliSeconds) / 1000;
     if (countdown > 10.9) {
       ocr();
       lastMilliSeconds = p.millis();
-      typeKeyboard(result);
+    } else {
+      p.textSize(40);
+      p.fill(0);
+      p.textAlign(p.LEFT, p.TOP);
+      p.text(11 - p.ceil(countdown), 10, 10);
     }
-    if (capture) {
-      p.image(capture, 0, 0);
+    if (result.length > 0) {
+      typeKeyboard(result);
+      result = "";
     }
     p.textAlign(p.LEFT, p.BOTTOM);
     p.textWrap(p.CHAR);
     p.fill("#c90d00");
     p.textSize(20);
     p.text(result, 10, p.height - 10, p.width - 20);
-
-    p.textSize(40);
-    p.fill(0);
-    p.textAlign(p.LEFT, p.TOP);
-    p.text(11 - p.ceil(countdown), 10, 10);
   };
 };
 new p5(sketch);
 
-const ocrUrl = import.meta.env.VITE_API_URL;
-const keyboardUrl = import.meta.env.VITE_KEYBOARD_URL;
 async function typeKeyboard(t: string) {
+  const keyboardUrl = import.meta.env.VITE_KEYBOARD_URL;
   try {
+    if (keyboardUrl.length < 1) {
+      throw new Error("Keyboard URL not found");
+    }
+
     const response = await fetch(`${keyboardUrl}/keyboard`, {
       method: "POST",
       body: t,
@@ -59,6 +65,7 @@ async function typeKeyboard(t: string) {
 }
 
 async function ocr() {
+  const ocrUrl = import.meta.env.VITE_API_URL;
   const canvas = document.querySelector("canvas");
   if (!canvas) {
     console.error("canvas not found");
@@ -67,6 +74,9 @@ async function ocr() {
   canvas.toBlob(
     async (blob) => {
       try {
+        if (ocrUrl.length < 1) {
+          throw new Error("OCR URL not found");
+        }
         const form = new FormData();
         if (!blob) throw new Error("could not get blob");
         form.append("image", blob);
@@ -75,17 +85,12 @@ async function ocr() {
           method: "POST",
           body: form,
         });
+
         if (response.ok) {
           let t = await response.text();
+          console.log(t);
           if (t.length > 0) {
-            let mapped = t
-              .split('"')
-              .join(" ")
-              .split(",")
-              .join(" ")
-              .split(";")
-              .join(" ");
-            result = mapped;
+            result = t.split('"').join("");
           } else {
             result = "";
           }
