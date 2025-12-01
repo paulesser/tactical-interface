@@ -17,9 +17,13 @@ const sketch = (p: p5) => {
   };
   p.draw = async () => {
     p.background(100);
+    p.push();
+    p.scale(-1, -1);
+    p.translate(-p.width, -p.height);
     if (capture) {
       p.image(capture, 0, 0);
     }
+    p.pop();
     countdown = (p.millis() - lastMilliSeconds) / 1000;
     if (countdown > 10.9) {
       ocr();
